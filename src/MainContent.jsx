@@ -1,5 +1,19 @@
+import { useState } from "react"
 import cart from './assets/images/icon-cart.svg'
-const Content = () => {
+
+const Content = ({ setCartCount }) => {
+    const [quantity, setQuantity] = useState(0)
+
+    const increment = () => setQuantity(q => q + 1)
+    const decrement = () => setQuantity(q => (q > 0 ? q - 1 : 0))
+
+    const addToCart = () => {
+        if (quantity > 0) {
+            setCartCount(prev => prev + quantity)
+            setQuantity(0) // reset after adding
+        }
+    }
+
     return(
         <main >
             <h3 style={h3Styles}>sneaker company</h3>
@@ -14,12 +28,12 @@ const Content = () => {
             </div>
             <div className="order" style={{display:'flex', gap:'1em'}}>
                 <div className="increment_button" style={{background:'var(--lg_blue)', borderRadius:'16px', width:'250px',height:'60px', display: 'flex', gap:'4em',alignItems:'center', justifyContent:'center' }}>
-                    <button style={{color:'var(--Orange)', fontSize:'2.5em', background:'var(--lg_blue)', fontWeight:'500'}}>-</button>
-                    <div style={{fontWeight:'bold'}}>0</div>
-                    <button style={{color:'var(--Orange)', fontSize:'1.5em', background:'var(--lg_blue)', fontWeight:'600'}}>+</button>
+                    <button onClick={decrement} style={{color:'var(--Orange)', fontSize:'2.5em', background:'var(--lg_blue)', fontWeight:'500'}}>-</button>
+                    <div style={{fontWeight:'bold'}}>{quantity}</div>
+                    <button onClick={increment} style={{color:'var(--Orange)', fontSize:'1.5em', background:'var(--lg_blue)', fontWeight:'600'}}>+</button>
                 </div>
-                <button className="add_to_cart" style={{background:'var(--Orange)', borderRadius:'16px', width:'250px',height:'60px', display: 'flex', gap:'1em',alignItems:'center', justifyContent:'center' }}>
-                    <img src={cart} alt="cart" />
+                <button onClick={addToCart} className="add_to_cart" style={{background:'var(--Orange)', borderRadius:'16px', width:'250px',height:'60px', display: 'flex', gap:'1em',alignItems:'center', justifyContent:'center' }}>
+                    <img src={cart} alt="cart"  style={{filter: 'brightness(0) saturate(100%)'}} />
                     <div style={{fontSize:'var(--Fs)', fontWeight:'600'}}>Add to cart</div>
                 </button>
             </div>
