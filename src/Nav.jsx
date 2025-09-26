@@ -3,12 +3,21 @@ import logo from "../public/logo.svg";
 import cartIcon from "./assets/images/icon-cart.svg";
 import avatar from "./assets/images/image-avatar.png";
 import deleteIcon from "./assets/images/icon-delete.svg";
-import productThumb from "./assets/images/image-product-1-thumbnail.jpg";
 
+import product_thumbnail1 from "./assets/images/image-product-1-thumbnail.jpg";
+import product_thumbnail2 from "./assets/images/image-product-2-thumbnail.jpg";
+import product_thumbnail3 from "./assets/images/image-product-3-thumbnail.jpg";
+import product_thumbnail4 from "./assets/images/image-product-4-thumbnail.jpg";
 
 const links = ["Collections", "Men", "Women", "About", "Contact"];
+const productThumbs = [
+  product_thumbnail1,
+  product_thumbnail2,
+  product_thumbnail3,
+  product_thumbnail4,
+];
 
-const Nav = ({ cartItems, setCartItems }) => {
+const Nav = ({ cartItems, setCartItems, activeIndex }) => {
   const [activeLink, setActiveLink] = useState("Collections");
   const [isCartOpen, setIsCartOpen] = useState(false);
 
@@ -102,7 +111,7 @@ const Nav = ({ cartItems, setCartItems }) => {
                       }}
                     >
                       <img
-                        src={productThumb }
+                        src={productThumbs[activeIndex]}
                         alt={item.name}
                         style={{ width: "50px", borderRadius: "8px" }}
                       />
@@ -210,3 +219,4 @@ const checkoutBtn = {
 };
 
 export default Nav;
+

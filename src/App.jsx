@@ -6,13 +6,14 @@ import { useState } from 'react'
 
 function App() {
   const [cartItems, setCartItems] = useState([])
+  const [activeIndex, setActiveIndex] = useState(0) // 🔗 Shared state
 
   return (
     <>
-      <Nav cartItems={cartItems} setCartItems={setCartItems} />
+      <Nav cartItems={cartItems} setCartItems={setCartItems} activeIndex={activeIndex} />
       <div style={bodyStyles}>
-        <SideBar />
-        <Content setCartItems={setCartItems} />
+        <SideBar activeIndex={activeIndex} setActiveIndex={setActiveIndex} />
+        <Content setCartItems={setCartItems} activeIndex={activeIndex} />
       </div>
     </>
   )
@@ -24,6 +25,3 @@ const bodyStyles = {
 }
 
 export default App
-
-
-

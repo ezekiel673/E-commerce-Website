@@ -1,9 +1,7 @@
 import { useState } from "react"
 import cart from './assets/images/icon-cart.svg'
-import productThumbnail from './assets/images/image-product-1-thumbnail.jpg'
 
-
-const Content = ({ setCartItems }) => {
+const Content = ({ setCartItems, activeIndex }) => {
     const [quantity, setQuantity] = useState(0)
     const [hoveredBtn, setHoveredBtn] = useState(null)
     const [activeBtn, setActiveBtn] = useState(null)
@@ -18,7 +16,7 @@ const Content = ({ setCartItems }) => {
                 name: "Fall Limited Edition Sneakers",
                 price: 125,
                 quantity,
-                img: productThumbnail
+                img: activeIndex // store index
             }
             setCartItems(prev => [...prev, newItem])
             setQuantity(0) 
