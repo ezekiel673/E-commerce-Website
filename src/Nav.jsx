@@ -3,6 +3,8 @@ import logo from "../public/logo.svg";
 import cartIcon from "./assets/images/icon-cart.svg";
 import avatar from "./assets/images/image-avatar.png";
 import deleteIcon from "./assets/images/icon-delete.svg";
+import productThumb from "./assets/images/image-product-1-thumbnail.jpg";
+
 
 const links = ["Collections", "Men", "Women", "About", "Contact"];
 
@@ -16,9 +18,10 @@ const Nav = ({ cartItems, setCartItems }) => {
     setCartItems(cartItems.filter((item) => item.id !== id));
   };
 
+  const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
   return (
     <nav style={navStyles}>
-      {/* Logo & Links */}
       <div style={{ display: "flex", alignItems: "center", gap: "5em" }}>
         <div>
           <img src={logo} alt="logo" />
@@ -34,12 +37,12 @@ const Nav = ({ cartItems, setCartItems }) => {
                 }}
                 style={{
                   ...aStyles,
-                  color:
-                    activeLink === link ? "var(--Black)" : "var(--dg_blue)",
+                  color: activeLink === link ? "var(--Black)" : "var(--dg_blue)",
                   borderBottom:
                     activeLink === link
                       ? "2px solid var(--Orange)"
                       : "2px solid transparent",
+                  marginBottom: "-1px",
                 }}
               >
                 {link}
@@ -49,9 +52,7 @@ const Nav = ({ cartItems, setCartItems }) => {
         </ul>
       </div>
 
-      {/* Right Actions */}
       <div style={sideNavStyles}>
-        {/* Cart */}
         <div style={{ position: "relative" }}>
           <img
             src={cartIcon}
@@ -59,8 +60,8 @@ const Nav = ({ cartItems, setCartItems }) => {
             style={{ cursor: "pointer" }}
             onClick={toggleCart}
           />
-          {cartItems.length > 0 && (
-            <span style={badgeStyles}>{cartItems.length}</span>
+          {totalQuantity > 0 && (
+            <span style={badgeStyles}>{totalQuantity}</span>
           )}
 
           {isCartOpen && (
@@ -101,7 +102,7 @@ const Nav = ({ cartItems, setCartItems }) => {
                       }}
                     >
                       <img
-                        src={item.img}
+                        src={productThumb }
                         alt={item.name}
                         style={{ width: "50px", borderRadius: "8px" }}
                       />
@@ -127,7 +128,6 @@ const Nav = ({ cartItems, setCartItems }) => {
           )}
         </div>
 
-        {/* Avatar */}
         <img
           src={avatar}
           alt="avatar"
@@ -145,7 +145,6 @@ const Nav = ({ cartItems, setCartItems }) => {
   );
 };
 
-// ---------------- STYLES ----------------
 const navStyles = {
   display: "flex",
   alignItems: "center",
