@@ -12,7 +12,7 @@ function App() {
       <Nav cartItems={cartItems} setCartItems={setCartItems} />
       <div style={bodyStyles}>
         <SideBar />
-        <Content cartItems={cartItems} setCartItems={setCartItems} />
+        <Content setCartItems={setCartItems} />
       </div>
     </>
   )
@@ -24,5 +24,6 @@ const bodyStyles = {
 }
 
 export default App
+
 
 
