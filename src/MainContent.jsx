@@ -16,7 +16,7 @@ const Content = ({ setCartItems, activeIndex }) => {
                 name: "Fall Limited Edition Sneakers",
                 price: 125,
                 quantity,
-                img: activeIndex // store index
+                img: activeIndex 
             }
             setCartItems(prev => [...prev, newItem])
             setQuantity(0) 
@@ -30,7 +30,51 @@ const Content = ({ setCartItems, activeIndex }) => {
     }
 
     return(
-        <main>
+        <main className="content">
+            <style>
+                {`
+                  @media (max-width: 500px) {
+                    .content {
+                      margin-top: 16px;
+                    }
+
+                    .content h3,
+                    .content h1,
+                    .content p {
+                      width: 90% !important;
+                      margin-left: 16px !important
+                    }
+                    .price{
+                      flex-direction: row !important;
+                      align-items: center;
+                      width: 90% !important;
+                      justify-content: space-between;
+                      margin-left: 16px !important
+
+                    }
+
+                    .content h1{
+                        font-size:2.2rem !important
+                    }
+                    .content p{
+                        font-size: 14px !important
+                    }
+
+                    .order {
+                      display: flex;
+                      flex-direction: column;
+                      gap: 1em;
+                      align-items: center;
+                    }
+
+                    .increment_button,
+                    .add_to_cart {
+                      width: 90% !important;
+                    }
+                  }
+                `}
+            </style>
+
             <h3 style={h3Styles}>sneaker company</h3>
             <h1 style={{margin:'0.5em 0 0.5em 0', width:'70%', fontSize:'3em'}}>
               Fall Limited Edition Sneakers
@@ -40,23 +84,27 @@ const Content = ({ setCartItems, activeIndex }) => {
             </p>
 
             {/* Price Section */}
-            <div className="price" style={{display: 'flex', gap:'1em', marginBottom:'2.5em'}}>
-                <div> 
+            <div className="price" style={{display: 'flex', flexDirection:'column', gap:'0.75em', marginBottom:'2.5em'}}>
+                <div style={{display:'flex', gap: '1em'}}> 
                     <div style={{fontSize:'1.75em', fontWeight:'bolder'}}> $125.00</div>
-                    <div style={{textDecoration:'line-through', color: 'var(--dg_blue)', fontWeight:'700'}}>$250.00</div>
+                    <div style={{
+                        display: 'flex',
+                        alignItems:'center',
+                        justifyContent:'center',
+                        background:'var(--Black)',
+                        color:'var(--White)',
+                        borderRadius:'0.3em',
+                        width:'70px',
+                        height:'32px',
+                        fontSize:'1.15em'
+                    }}>
+                        50%
+                    </div>
                 </div>
                 <div style={{
-                    display: 'flex',
-                    alignItems:'center',
-                    justifyContent:'center',
-                    background:'var(--Black)',
-                    color:'var(--White)',
-                    borderRadius:'0.3em',
-                    width:'70px',
-                    height:'32px',
-                    fontSize:'1.15em'
+                   textDecoration:'line-through', color: 'var(--dg_blue)', fontWeight:'700'
                 }}>
-                  50%
+                  $250.00
                 </div>
             </div>
 
@@ -113,7 +161,7 @@ const Content = ({ setCartItems, activeIndex }) => {
                 </div>
 
                 <button
-                    onClick={addToCart}
+                    onClick={() => addToCart(activeIndex)}
                     onMouseEnter={() => setHoveredBtn("cart")}
                     onMouseLeave={() => setHoveredBtn(null)}
                     onMouseDown={() => setActiveBtn("cart")}
