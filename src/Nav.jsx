@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import logo from "../public/logo.svg";
 import cartIcon from "./assets/images/icon-cart.svg";
 import avatar from "./assets/images/image-avatar.png";
 import deleteIcon from "./assets/images/icon-delete.svg";
+import closeIcon from "./assets/images/icon-close.svg";
+import menuIcon from "./assets/images/icon-menu.svg";
 
 import product_thumbnail1 from "./assets/images/image-product-1-thumbnail.jpg";
 import product_thumbnail2 from "./assets/images/image-product-2-thumbnail.jpg";
@@ -20,8 +22,11 @@ const productThumbs = [
 const Nav = ({ cartItems, setCartItems, activeIndex }) => {
   const [activeLink, setActiveLink] = useState("Collections");
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const toggleCart = () => setIsCartOpen(!isCartOpen);
+  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
   const removeFromCart = (id) => {
     setCartItems(cartItems.filter((item) => item.id !== id));
@@ -29,38 +34,104 @@ const Nav = ({ cartItems, setCartItems, activeIndex }) => {
 
   const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
+  const isMobile = windowWidth <= 500;
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <nav style={navStyles}>
-      <div style={{ display: "flex", alignItems: "center", gap: "5em" }}>
-        <div>
-          <img src={logo} alt="logo" />
-        </div>
-        <ul style={ulStyles}>
-          {links.map((link) => (
-            <li key={link} style={{ position: "relative" }}>
-              <a
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setActiveLink(link);
-                }}
-                style={{
-                  ...aStyles,
-                  color: activeLink === link ? "var(--Black)" : "var(--dg_blue)",
-                  borderBottom:
-                    activeLink === link
-                      ? "2px solid var(--Orange)"
-                      : "2px solid transparent",
-                  marginBottom: "-1px",
-                }}
-              >
-                {link}
-              </a>
-            </li>
-          ))}
-        </ul>
+      <div style={{ display: "flex", alignItems: "center", gap: "2em" }}>
+        {isMobile ? (
+          <>
+            {/* Mobile: show hamburger if menu closed, close icon if menu open */}
+            {!isMobileMenuOpen && (
+              <img
+                src={menuIcon}
+                alt="menu"
+                style={{ cursor: "pointer" }}
+                onClick={toggleMobileMenu}
+              />
+            )}
+            {isMobileMenuOpen && (
+              <div style={mobileMenuOverlay}>
+                <img
+                  src={closeIcon}
+                  alt="close"
+                  style={{ cursor: "pointer", width:'20px', marginBottom: "2em" }}
+                  onClick={toggleMobileMenu}
+                />
+                <ul style={mobileUlStyles}>
+                  {links.map((link) => (
+                    <li key={link} style={{ marginBottom: "1.5em" }}>
+                      <a
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setActiveLink(link);
+                          toggleMobileMenu();
+                        }}
+                        style={{
+                          ...aStyles,
+                          fontWeight: "700",
+                          color: 
+                            activeLink === link
+                              ? "var(--Orange)"
+                              : "var(--Black)",
+                        }}
+                      >
+                        {link}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Hide logo when menu is open */}
+            {!isMobileMenuOpen && (
+              <img src={logo} alt="logo" style={{ height: "20px" }} />
+            )}
+          </>
+        ) : (
+          <>
+            {/* Desktop */}
+            <img src={logo} alt="logo" />
+            <ul style={ulStyles}>
+              {links.map((link) => (
+                <li key={link} style={{ position: "relative" }}>
+                  <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setActiveLink(link);
+                    }}
+                    style={{
+                      ...aStyles,
+                      color:
+                        activeLink === link
+                          ? "var(--Black)"
+                          : "var(--dg_blue)",
+                      borderBottom:
+                        activeLink === link
+                          ? "2px solid var(--Orange)"
+                          : "2px solid transparent",
+                      marginBottom: "-1px",
+                    }}
+                  >
+                    {link}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
       </div>
 
+      {/* Side nav (cart + avatar) always visible */}
       <div style={sideNavStyles}>
         <div style={{ position: "relative" }}>
           <img
@@ -154,6 +225,7 @@ const Nav = ({ cartItems, setCartItems, activeIndex }) => {
   );
 };
 
+// ✅ styles
 const navStyles = {
   display: "flex",
   alignItems: "center",
@@ -171,6 +243,28 @@ const ulStyles = {
   padding: 0,
 };
 
+const mobileUlStyles = {
+  listStyle: "none",
+  padding: 0,
+  margin: 0,
+  display: "flex",
+  flexDirection: "column",
+};
+
+const mobileMenuOverlay = {
+  position: "fixed",
+  top: 0,
+  left: 0,
+  height: "100vh",
+  width: "70%",
+  background: "white",
+  padding: "2em 1.5em",
+  display: "flex",
+  flexDirection: "column",
+  zIndex: 1000,
+  boxShadow: "2px 0 20px rgba(0,0,0,0.15)",
+};
+
 const aStyles = {
   fontSize: "var(--Fs)",
   textDecoration: "none",
@@ -181,7 +275,7 @@ const aStyles = {
 const sideNavStyles = {
   display: "flex",
   alignItems: "center",
-  gap: "2.5em",
+  gap: "2em",
 };
 
 const badgeStyles = {
@@ -219,4 +313,3 @@ const checkoutBtn = {
 };
 
 export default Nav;
-
