@@ -6,12 +6,12 @@ import { useState } from 'react'
 
 function App() {
   const [cartItems, setCartItems] = useState([])
-  const [activeIndex, setActiveIndex] = useState(0) // 🔗 Shared state
+  const [activeIndex, setActiveIndex] = useState(0)
 
   return (
     <>
       <Nav cartItems={cartItems} setCartItems={setCartItems} activeIndex={activeIndex} />
-      <div style={bodyStyles}>
+      <div className='body-styles'>
         <SideBar activeIndex={activeIndex} setActiveIndex={setActiveIndex} />
         <Content setCartItems={setCartItems} activeIndex={activeIndex} />
       </div>
@@ -19,9 +19,5 @@ function App() {
   )
 }
 
-const bodyStyles = {
-  display: 'flex',
-  marginTop: '5em'
-}
 
 export default App
