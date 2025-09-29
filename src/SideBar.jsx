@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import product1 from "./assets/images/image-product-1.jpg";
 import product2 from "./assets/images/image-product-2.jpg";
@@ -14,18 +14,26 @@ import closeIcon from "./assets/images/icon-close.svg";
 import nextIcon from "./assets/images/icon-next.svg";
 import prevIcon from "./assets/images/icon-previous.svg";
 
-const SideBar = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
+const SideBar = ({ activeIndex, setActiveIndex }) => {
   const [hoverIndex, setHoverIndex] = useState(null);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const products = [product1, product2, product3, product4];
-  const thumbnails = [
+  const productThumbs = [
     product_thumbnail1,
     product_thumbnail2,
     product_thumbnail3,
     product_thumbnail4,
   ];
+
+  const isMobile = windowWidth <= 500;
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const openLightbox = () => setIsLightboxOpen(true);
   const closeLightbox = () => setIsLightboxOpen(false);
@@ -41,58 +49,93 @@ const SideBar = () => {
   return (
     <>
       <section style={SectionStyles}>
-        <img
-          src={products[activeIndex]}
-          alt="Main product"
-          style={img1Styles}
-          onClick={openLightbox}
-        />
+        <div style={{ position: "relative", width: isMobile ? "100%" : "70%" }}>
+          <img
+            src={products[activeIndex]}
+            alt="Main product"
+            style={isMobile ? mobileImgStyles : img1Styles}
+            onClick={!isMobile ? openLightbox : undefined}
+          />
 
-        <div style={shoeGalleryStyles}>
-          {thumbnails.map((thumb, index) => (
-            <div
-              key={index}
-              style={{
-                position: "relative",
-                borderRadius: "10px",
-                overflow: "hidden",
-                cursor: "pointer",
-                border:
-                  activeIndex === index
-                    ? "3px solid var(--Orange)"
-                    : "3px solid transparent",
-                transition: "all 0.3s ease",
-              }}
-              onClick={() => setActiveIndex(index)}
-              onMouseEnter={() => setHoverIndex(index)}
-              onMouseLeave={() => setHoverIndex(null)}
-            >
-              <img
-                src={thumb}
-                alt={`thumbnail-${index + 1}`}
-                style={{
-                  width: "75px",
-                  height: "75px",
-                  borderRadius: "10px",
-                  display: "block",
-                }}
-              />
-              <div
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  backgroundColor: "hsla(0, 0%, 100%, 0.25)",
-                  opacity: activeIndex === index || hoverIndex === index ? 1 : 0,
-                  transition: "opacity 0.3s ease",
-                }}
-              />
-            </div>
-          ))}
+          {isMobile && (
+            <>
+              <button onClick={goPrev} style={{ ...mobileNavBtn, left: "10px" }}>
+                <img src={prevIcon} alt="prev" />
+              </button>
+              <button
+                onClick={goNext}
+                style={{ ...mobileNavBtn, right: "10px" }}
+              >
+                <img src={nextIcon} alt="next" />
+              </button>
+            </>
+          )}
         </div>
+
+        {/* Desktop thumbnails only */}
+        {!isMobile && (
+          <div style={shoeGalleryStyles}>
+            {productThumbs.map((thumb, index) => (
+              <div
+                key={index}
+                style={{
+                  position: "relative",
+                  borderRadius: "10px",
+                  overflow: "hidden",
+                  cursor: "pointer",
+                  border:
+                    activeIndex === index
+                      ? "3px solid var(--Orange)"
+                      : "3px solid transparent",
+                  transition: "all 0.3s ease",
+                }}
+                onClick={() => setActiveIndex(index)}
+                onMouseEnter={() => setHoverIndex(index)}
+                onMouseLeave={() => setHoverIndex(null)}
+              >
+                <img
+                  src={thumb}
+                  alt={`thumbnail-${index + 1}`}
+                  style={{
+                    width: "75px",
+                    height: "75px",
+                    borderRadius: "10px",
+                    display: "block",
+                  }}
+                />
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    backgroundColor: "hsla(0, 0%, 100%, 0.25)",
+                    opacity:
+                      activeIndex === index || hoverIndex === index ? 1 : 0,
+                    transition: "opacity 0.3s ease",
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
-      {isLightboxOpen && (
-        <div style={overlayStyles}>
+      {/* Lightbox (desktop only) */}
+      {!isMobile && isLightboxOpen && (
+        <div >
+           <style>
+                {`
+                  position: "fixed",
+                  inset: 0,
+                  backgroundColor: "rgba(0,0,0,0.75)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  zIndex: 999,
+                  @media (max-width: 500px) {
+                    display: 'block'
+                  }
+                `}
+              </style>
           <div style={lightboxStyles}>
             <img
               src={closeIcon}
@@ -103,15 +146,6 @@ const SideBar = () => {
                 cursor: "pointer",
                 marginBottom: "1em",
               }}
-
-                onMouseEnter={(e) =>
-                (e.currentTarget.style.filter =
-                "invert(46%) sepia(91%) saturate(2764%) hue-rotate(357deg) brightness(95%) contrast(101%)")
-                }
-                onMouseLeave={(e) =>
-                (e.currentTarget.style.filter =
-                "invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg)")
-                }
             />
 
             <div style={{ position: "relative" }}>
@@ -125,47 +159,16 @@ const SideBar = () => {
                 }}
               />
 
-              <button
-                onClick={goPrev}
-                style={{
-                  ...navButtonStyles,
-                  left: "-30px",
-                }}
-              >
-                <img src={prevIcon} alt="prev"
-                    onMouseEnter={(e) =>
-                    (e.currentTarget.style.filter =
-                    "invert(46%) sepia(91%) saturate(2764%) hue-rotate(357deg) brightness(95%) contrast(101%)")
-                    }
-                    onMouseLeave={(e) =>
-                    (e.currentTarget.style.filter =
-                    "invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg)")
-                    }
-                />
+              <button onClick={goPrev} style={{ ...navButtonStyles, left: "-30px" }}>
+                <img src={prevIcon} alt="prev" />
               </button>
-
-              <button
-                onClick={goNext}
-                style={{
-                  ...navButtonStyles,
-                  right: "-30px",
-                }}
-              >
-                <img src={nextIcon} alt="next"
-                    onMouseEnter={(e) =>
-                    (e.currentTarget.style.filter =
-                    "invert(46%) sepia(91%) saturate(2764%) hue-rotate(357deg) brightness(95%) contrast(101%)")
-                    }
-                    onMouseLeave={(e) =>
-                    (e.currentTarget.style.filter =
-                    "invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg)")
-                }
-                />
+              <button onClick={goNext} style={{ ...navButtonStyles, right: "-30px" }}>
+                <img src={nextIcon} alt="next" />
               </button>
             </div>
 
             <div style={shoeGalleryStyles}>
-              {thumbnails.map((thumb, index) => (
+              {productThumbs.map((thumb, index) => (
                 <div
                   key={index}
                   style={{
@@ -180,8 +183,6 @@ const SideBar = () => {
                     transition: "all 0.3s ease",
                   }}
                   onClick={() => setActiveIndex(index)}
-                  onMouseEnter={() => setHoverIndex(index)}
-                  onMouseLeave={() => setHoverIndex(null)}
                 >
                   <img
                     src={thumb}
@@ -191,16 +192,6 @@ const SideBar = () => {
                       height: "75px",
                       borderRadius: "10px",
                       display: "block",
-                    }}
-                  />
-                  <div
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      backgroundColor: "hsla(0, 0%, 100%, 0.25)",
-                      opacity:
-                        activeIndex === index || hoverIndex === index ? 1 : 0,
-                      transition: "opacity 0.3s ease",
                     }}
                   />
                 </div>
@@ -213,6 +204,7 @@ const SideBar = () => {
   );
 };
 
+// ✅ Styles
 const SectionStyles = {
   display: "flex",
   flexDirection: "column",
@@ -221,27 +213,23 @@ const SectionStyles = {
 };
 
 const img1Styles = {
-  width: "70%",
+  width: "100%",
   borderRadius: "16px",
-  alignSelf: "flex-start",
   cursor: "pointer",
+};
+
+const mobileImgStyles = {
+  width: "100%",
+  display: "block",
 };
 
 const shoeGalleryStyles = {
   display: "flex",
   gap: "1.5em",
   alignSelf: "flex-start",
+  marginLeft:'90px'
 };
 
-const overlayStyles = {
-  position: "fixed",
-  inset: 0,
-  backgroundColor: "rgba(0,0,0,0.75)",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  zIndex: 999,
-};
 
 const lightboxStyles = {
   display: "flex",
@@ -261,5 +249,15 @@ const navButtonStyles = {
   cursor: "pointer",
 };
 
-export default SideBar;
+const mobileNavBtn = {
+  position: "absolute",
+  top: "50%",
+  transform: "translateY(-50%)",
+  background: "white",
+  borderRadius: "50%",
+  border: "none",
+  padding: "0.8em",
+  cursor: "pointer",
+};
 
+export default SideBar;
